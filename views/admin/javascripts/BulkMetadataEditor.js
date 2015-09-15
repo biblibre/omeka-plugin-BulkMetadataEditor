@@ -29,25 +29,35 @@ jQuery(document).ready(function() {
     });
 
 
-    jQuery(".bulk-metadata-editor-selector").focus(function(e) {
-	var value = jQuery(this).val();
-	if(value=="Input search term here") {
-	    jQuery(this).val("");
-	}
-    });
-
    jQuery("#item-select-meta").change(function(){
        if(this.checked){
 	   jQuery("#item-meta-selects").show();
        } else {
 	   jQuery("#item-meta-selects").hide();
-	   jQuery(".bulk-metadata-editor-selector").val("Input search term here");
        }
    });
 
     jQuery("#add-rule").on("click",function(event){
-	event.preventDefault();
-	jQuery("#item-rule-box").clone(true).appendTo("#item-rule-boxes");
+      event.preventDefault();
+
+      jQuery.ajax({
+        url: '/admin/bulk-metadata-editor/index/add-item-rule',
+        dataType: 'text',
+        success: function (responseText) {
+          jQuery('#item-rule-boxes').append(responseText);
+          jQuery(document).trigger('bulk_metadata_editor:add_item_rule');
+        }
+      });
+    });
+
+    jQuery(document).on('bulk_metadata_editor:add_item_rule', function() {
+      jQuery(".removeRule").off('click').on('click', function(){
+        if(jQuery(".item-rule-box").length > 1) {
+          jQuery(this).parent().remove();
+        } else {
+          jQuery("#item-select-meta").trigger('click');
+        }
+      });
     });
 
     jQuery("#changesRadio-replace").change(function(){

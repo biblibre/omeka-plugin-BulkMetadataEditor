@@ -152,7 +152,9 @@ class BulkMetadataEditor_IndexController extends Omeka_Controller_AbstractAction
       }
     }
 
-
+    public function addItemRuleAction()
+    {
+    }
 
     /**
      * Perform the edits specified by the form input.
