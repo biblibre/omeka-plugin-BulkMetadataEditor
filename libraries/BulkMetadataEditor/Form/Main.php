@@ -360,12 +360,25 @@ class BulkMetadataEditor_Form_Main extends Omeka_Form
         $options = array();
         //        $options = array('' => __('Select Below'));
         foreach ($elements as $element) {
+            $element_id = $element['element_id'];
+
+            // Do not allow modification of elements linked to authorities
+            if (plugin_is_active('ElementTypes')) {
+                $element_types_by_id = Zend_Registry::get('element_types_by_id');
+                if (array_key_exists($element_id, $element_types_by_id)) {
+                    $element_type = $element_types_by_id[$element_id];
+                    if ($element_type->element_type == 'koha-authority') {
+                        continue;
+                    }
+                }
+            }
+
             $optGroup = $element['item_type_name']
                 ? __('Item Type') . ': ' . __($element['item_type_name'])
                 : __($element['element_set_name']);
             $value = __($element['element_name']);
 
-            $options[$optGroup][$element['element_id']] = $value;
+            $options[$optGroup][$element_id] = $value;
         }
         return $options;
     }
